@@ -36,17 +36,11 @@ On the assumption that the camera position stays fixed throughout the duration o
 
 ### Thresholding
 
-Two primary types of thresholding were applied in processing the images:
+Two primary types of thresholding were considered in processing the images:
 * Gradient (Sobel) Thresholding
 * Color Thresholding
 
-In terms of the gradient thresholding, Sobel operators with a Kernel size of 3 were applied to the x and y directions of grayscale image (obtained from changing the color space of the undistorted image). Only pixels that met both the x and y gradient thresholds were kept in the bitmask created for the combined thresholding.
-
-The gradient direction was also included in the thresholding, only keeping values in the bitmask that generated a gradient between 0.7 and 1.3 radians (roughly vertical lines). 
-
-The gradient magnitude did not appear to be very helpful, and so was not used.
-
-For the color thresholding, both the RGB and HLS color spaces were utilized. The Saturation channel of the HLS color space appeared to be most helpful in showing the majority of the lane lines. However, it also contained artifacts of the environment. Since the color of the lane lines were mostly white and yellow i.e. moderate to high levels of the green and red channels, high thresholds for the red and green channels were used in the thresholding to eliminate most of the unwanted artifacts that remained after the saturation channel thresholding.
+It was found that the L & B channels of the LAB color space was most effective at isolating the yellow component (lane) from the frames of the video. The Y channel of the YUV color space was found to work best for the white line, resulting in an almost error free image. While gradient thresholding was attempted, it proved to only eliminate useful points from the resulting combined threshold of the color spaces and hence was not used in the final solution. So, the net combination of thresholding only involved ORing the LAB thresholding for the yellow lane with the YUV thresholding for the white lane. A region of interest mask was applied to the result to eliminate other stray detections.
 
 The code for the thresholding can be found between the start of the `processImage` function and the `Combined Thresholding` comment in the jupyter notebook, `solution.ipynb`
 
